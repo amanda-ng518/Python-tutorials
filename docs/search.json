@@ -46,7 +46,7 @@
     "href": "index.html",
     "title": "Python_websites",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+    "text": "Welcome to the Python tutorial website!. Here, you’ll find practical, beginner‑friendly guides to essential data science libraries including NumPy, Pandas, Scikit‑learn, and Matplotlib. To support learners coming from different backgrounds, many examples are shown in both Python and R, making it easier to compare syntax and build intuition across languages. Each section includes hands‑on exercises designed to strengthen understanding and encourage exploration. Whether you’re just starting your programming journey or expanding your analytical toolkit, I hope these resources make learning both accessible and enjoyable.\nContributors: Amanda Ng and Gracia Dong"
   },
   {
     "objectID": "Pandas.html",

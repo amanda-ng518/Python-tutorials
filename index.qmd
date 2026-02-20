@@ -1,5 +1,5 @@
 ---
-title: "Python_websites"
+title: "Python Tutorial"
 ---
 
 Welcome to the Python tutorial website!. Here, you’ll find practical, beginner‑friendly guides to essential data science libraries including **NumPy**, **Pandas**, **Scikit‑learn**, and **Matplotlib**. To support learners coming from different backgrounds, many examples are shown in **both Python and R**, making it easier to compare syntax and build intuition across languages. Each section includes hands‑on exercises designed to strengthen understanding and encourage exploration. Whether you're just starting your programming journey or expanding your analytical toolkit, I hope these resources make learning both accessible and enjoyable.
