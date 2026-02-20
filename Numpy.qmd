@@ -1,0 +1,656 @@
+---
+title: "Numpy Tutorial"
+format: live-html
+engine: knitr
+toc: true
+webr:
+  packages:
+    - dplyr
+    - tidyr
+    - tidyverse
+pyodide:
+  packages:
+    - numpy
+live:
+  show-hints: true
+  show-solutions: true
+---
+
+
+
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}} {{< include ./_extensions/r-wasm/live/_gradethis.qmd >}}
+
+NumPy is an open source Python library designed for fast, efficient numerical computing, especially when working with large datasets or performing mathematical operations. It introduces multidimensional array data structures that enables vectorized operations of which we can apply computations across entire arrays without writing explicit loops, making it faster than standard Python lists for numerical tasks. It also offers a large library of functions for linear algebra, statistics, etc.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Import libraries
+
+import numpy as np 
+```
+
+```{pyodide}
+#| setup: true
+#| include: false
+#| autorun: true
+#| exercise: 
+#|    - ex_1
+#|    - ex_2
+#|    - ex_3
+#|    - ex_4
+#|    - ex_5
+#|    - ex_6
+#|    - ex_7
+#|    - ex_8
+#|    - ex_9
+
+import numpy as np 
+exercise_4_array = np.array([[1, 2, 4], [3, 4, 10]])
+```
+
+## 0. Introduction to Array
+
+In computer programming, an array is a structure for storing and retrieving data. In an array, each cell stores one element of the data. A 1D array is similar to a list and a 2D array is similar to a table.
+
+Most NumPy arrays have some restrictions:
+
+-   All elements of the array must be of the same type of data
+-   Once created, the total size of the array can’t change.
+-   The shape must be “rectangular”, not “jagged”; e.g., each row of a two-dimensional array must have the same number of columns.
+
+## 1. Creating Array
+
+The simplest way to create an array is to use wrap a list with `np.array()`.
+
+The example below creates a 1D array with values 1 to 6.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# A 1D array
+a = np.array([1, 2, 3, 4, 5, 6])
+a
+```
+
+To create multidimensional array, use nested lists.
+
+The example below creates a 2D array with 3 rows, each row has 2 elements.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# A 2D array
+b = np.array([[1, 2], [3, 4], [5, 6]])
+b
+```
+
+As an exercise, create an array that looks like this
+
+|     |     |     |
+|-----|:----|:---:|
+| 23  | 45  | 67  |
+| 123 | 456 | 789 |
+
+```{pyodide}
+#| exercise: ex_1
+exercise_1_array = ______________________
+
+# Do not edit below
+exercise_1_array
+```
+
+```{pyodide}
+#| exercise: ex_1
+#| check: true
+
+answer = np.array([[23, 45, 67], [123, 456, 789]])
+
+feedback = None
+if (np.array_equal(result, answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+Aside from listing the elements explicitly, we can also create array with elements as a range of values, using `np.arange()`.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Create an array with elements starting from 5 and ends at 15 (exclusive)
+# with step 3
+c = np.arange(5, 15, 3)
+c
+```
+
+We can also create an array that stores a range of values with evenly spaced interval in between, using `np.linspace()`.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Create an array with elements starting from 5 and ends at 15 (exclusive)
+# with 3 elements
+d = np.linspace(5, 15, 3)
+d
+```
+
+As an exercise, create an array with 7 evenly spaced elements starting from 12 and ends at 86.
+
+```{pyodide}
+#| exercise: ex_2
+exercise_2_array = ______________________
+
+# Do not edit below
+exercise_2_array
+```
+
+```{pyodide}
+#| exercise: ex_2
+#| check: true
+
+answer = np.linspace(12, 86, 7)
+
+feedback = None
+if (np.array_equal(result, answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+Sometimes, it is also useful to set up an array with all zeros. We can use `np.zeros()` to do so. Inside the function, set up the array dimension using a tuple `()`. You can also specify the data type as integer using `dtype=int` option.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Create an array with 2 rows and 3 columns which has all entries as zeros
+e = np.zeros((2,3))
+e
+```
+
+Similarly, we can set up an array with all onces using `np.ones()`. Inside the function, set up the array dimension using a tuple `()`.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Create an array with 2 rows and 3 columns which has all entries as ones
+f = np.ones((2,3))
+f
+```
+
+Aside from 0 and 1, we can create an array of given shape, filled with specificed value using `np.full((shape), fill_value)`.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Create an array with 2 rows and 3 columns which has all entries as 5
+g = np.full((2,3), 5)
+g
+```
+
+We can also create an array of given shape, filled with random numbers using `np.random.rand()`. Do not wrap the shape with a tuple here.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Create an array with 2 rows and 3 columns which has random number elements
+h = np.random.rand(2,3)
+h
+```
+
+As an exercise, create an array with 5 rows and 6 columns, all filled with 8.
+
+```{pyodide}
+#| exercise: ex_3
+exercise_3_array = ______________________
+
+# Do not edit below
+exercise_3_array
+```
+
+```{pyodide}
+#| exercise: ex_3
+#| check: true
+
+answer = np.full((5,6), 8)
+
+feedback = None
+if (np.array_equal(result, answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+## 2. Array attributes
+
+Recall we created an array `b` as follow:
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+b
+```
+
+The number of dimensions (i.e. number of columns in 2D array) of an array is contained in the `ndim` attribute.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+b.ndim
+```
+
+The total number of elements in array is contained in the `size` attribute.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+b.size
+```
+
+The `shape` of an array is a tuple of non-negative integers that specify the number of elements along each dimension. In 2D array, we get a tuple indicating number of rows and number of columns.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+b.shape
+```
+
+Arrays usually contain elements of only one “data type”. The data type is recorded in the `dtype` attribute.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+b.dtype
+```
+
+As an exercise, report the number of rows, number of columns and total number of elements in the array `exercise_4_array` (You can use this variable name directly, it has been preloaded).
+
+```{pyodide}
+#| exercise: ex_4
+# Hint: extract the shape and size attributes from exercise_4_array
+__________________
+nrow = ___
+ncol = ___
+total_number_of_elements = ____
+
+# Do not edit below
+np.array([nrow, ncol, total_number_of_elements])
+```
+
+```{pyodide}
+#| exercise: ex_4
+#| check: true
+
+nrow = 2
+ncol = 3
+total_number_of_elements = 6
+
+answer = np.array([nrow, ncol, total_number_of_elements])
+
+feedback = None
+if (np.array_equal(result, answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+## 3. Array operations
+
+### 3.1 Check arrays equality
+
+You can check if two arrays are the same using `np.array_equal(array_1, array2)`. For instance
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+np.array_equal(b, c)
+```
+
+### 3.2 Arithmetic operations
+
+To conduct element-wise arithmetic operations on arrays such as `+`, `-`, `*`, `/`, `**`, we require the arrays to be of the same size.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+A = np.array([[1, 1],
+              [0, 1]])
+B = np.array([[2, 5],
+              [3, 4]])
+
+A + B # elementwise addition
+```
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+A - B  # elementwise subtraction
+```
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+A * B # elementwise multiplication
+```
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+A / B # elementwise division
+```
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+A @ B     # matrix product
+```
+
+### 3.3 Uunary operations
+
+Many unary operations, such as computing the sum of all the elements in the array, are implemented as methods of the `ndarray` class.
+
+Methods include:
+
+-   `.mean()`
+-   `.median()`
+-   `.sum()`
+-   `.min()`
+-   `.max()`
+-   `.std()`
+-   `.var()`
+-   `.round()`
+-   `.ceil()`
+-   `.floor()`
+
+For example, we can compute the sum of all elements in 1D array `a` as follow
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Recall that a is a 1D array
+a.sum()
+```
+
+By default, these operations apply to the array as though it were a list of numbers, regardless of its shape. However, by specifying the axis parameter you can apply an operation along the specified axis of an array.
+
+When `axis = 0`, we are applying the function on each column. When `axis = 1`, we are applying the function on each row.
+
+```{pyodide}
+# Recall that b is a 2D array
+b.sum(axis=0)     # sum of each column
+b.min(axis=1)     # min of each row
+b.cumsum(axis=1)  # cumulative sum along each row
+```
+
+As an exercise, find out what is the row means for `exercise_4_array` (You can use this variable name directly, it has been preloaded).
+
+```{pyodide}
+#| exercise: ex_5
+# Hint: use .mean() and specify the axis on exercise_4_array
+__________________
+
+```
+
+```{pyodide}
+#| exercise: ex_5
+#| check: true
+
+answer = exercise_4_array.mean(axis = 0)
+
+feedback = None
+if (np.array_equal(result, answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+### 3.4 Universal operations
+
+We can also apply element wise transformation to an array. Some examples include
+
+-   `np.exp(array)`: exponentiate all entries
+-   `np.sqrt(array)`: take square root of all entries
+-   `np.add(array1, array2)`: elementwise addition
+
+As an exercise, take square root of all entries in `exercise_4_array` (You can use this variable name directly, it has been preloaded) and store it under `exercise_6_array`.
+
+```{pyodide}
+#| exercise: ex_6
+# Hint: use .mean() and specify the axis on exercise_4_array
+exercise_6_array = ______________
+
+# Do not edit below
+exercise_6_array
+```
+
+```{pyodide}
+#| exercise: ex_6
+#| check: true
+
+answer = np.sqrt(exercise_4_array)
+
+feedback = None
+if (np.array_equal(result, answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+## 4. Transposing and reshaping arrays
+
+To transpose an array, use the `.T` method. For instance
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Recall that b = np.array([[1, 2], [3, 4], [5, 6]]), which is 3x2
+# Transpose of b
+b.T
+```
+
+We can also reshape arrays into a desired shape with method `.reshape()`
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Reshape b into 2 rows and 3 columns
+b.reshape(2, 3)
+```
+
+If we want to transform a multidimensional array into a 1D array, i.e. flattening the array, we can use `.flatten()` or `.ravel()`. With `ravel()`, the new array created is a reference to the parent array. So, any changes to the new array will affect the parent array as well. But since ravel does not create a copy, it’s more memory efficient.
+
+The example below demonstrates flatten and ravel applied on b and how they affect the parent array (`b`) if modifications are done on the new arrays (`b_flatten` and `b_ravel`).
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Flatten b into 1D array using flatten
+b_flatten = b.flatten()
+print(b_flatten)
+
+# Flatten b into 1D array using ravel
+b_ravel = b.ravel()
+print(b_ravel)
+```
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Make changes to new arrays
+b_flatten[0] = 99
+
+# Changed new array
+print(b_flatten)
+
+# No change in original array
+print(b)
+```
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Make changes to new arrays
+b_ravel[0] = 99
+
+# Changed new array
+print(b_ravel)
+
+# Change in original array as well
+print(b)
+```
+
+As an exercise, flatten in `exercise_4_array` (You can use this variable name directly, it has been preloaded) and store it under `exercise_7_array`. When we make edits on `exercise_7_array`, we want the modifications to be reflected on `exercise_4_array` as well.
+
+```{pyodide}
+#| exercise: ex_7
+# Hint: Should we use flatten or ravel?
+exercise_7_array = ______________
+
+# Do not edit below
+exercise_7_array
+```
+
+```{pyodide}
+#| exercise: ex_7
+#| check: true
+
+answer = exercise_4_array.ravel()
+
+feedback = None
+if (np.array_equal(result, answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+## 5. Indexing and slicing
+
+We can index and slice arrays the same way as in Python lists.
+
+Recall that in Python, indexing starts from 0. We also index elements by counting backwards and adding a negative sign to the count. To slice a range of elements, use `start:stop:step`. By default, `stop` is length of the array and `step` is 1. Note that `stop` is exclusive.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Recall 1D array: a = np.array([1, 2, 3, 4, 5, 6])
+# The second element of a
+a[1]
+```
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# The first 2 elements of a
+a[0:2]
+```
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Slice all elements starting from the second elements till the end of a
+a[1:]
+```
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Slice all elements starting from the second last elements till the end of a
+a[-2:]
+```
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Slice every 2 step elements starting from the second elements till the end of a
+a[2: :2]
+```
+
+Multidimensional arrays can have one index per axis. These indices are given in a tuple separated by commas.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Recall 2D array b = np.array([[1, 2], [3, 4], [5, 6]])
+# Entry corresponding to the 3nd row and 2nd col of b
+b[2,1]
+```
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# First 2 rows in the second column of b
+b[0:2, 1]  
+```
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# All columns in the second and third row of b
+b[1:3, :] 
+```
+
+As an exercise, extract the 3rd column entries in all rows in `exercise_4_array` (You can use this variable name directly, it has been preloaded) and store it under `exercise_8_array`.
+
+```{pyodide}
+#| exercise: ex_8
+# Hint: Use : for all rows. What is the index for the 3rd column?
+exercise_8_array = ______________
+
+# Do not edit below
+exercise_8_array
+```
+
+```{pyodide}
+#| exercise: ex_8
+#| check: true
+
+answer = exercise_4_array[:, 2]
+
+feedback = None
+if (np.array_equal(result, answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```

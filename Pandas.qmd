@@ -1,0 +1,762 @@
+---
+title: "Pandas Tutorial"
+format: live-html
+engine: knitr
+toc: true
+resources:
+  - data
+webr:
+  packages:
+    - dplyr
+    - tidyr
+    - tidyverse
+pyodide:
+  packages:
+    - pandas
+    - numpy
+live:
+  show-hints: true
+  show-solutions: true
+---
+
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}}
+{{< include ./_extensions/r-wasm/live/_gradethis.qmd >}}
+
+Pandas is a Python library used for working with data sets, often used to conduct cleaning, exploring, and statistic summary.
+
+```{pyodide}
+#| edit: false
+# Import libraries
+
+import numpy as np 
+import pandas as pd
+```
+
+```{pyodide}
+#| setup: true
+#| include: false
+#| autorun: true
+#| exercise: 
+#|    - ex_1
+#|    - ex_2
+#|    - ex_3
+#|    - ex_4
+#|    - ex_5
+#|    - ex_6
+#|    - ex_7
+
+import numpy as np 
+import pandas as pd
+df = pd.read_csv("data/nhanes_CVD_risk_dataset.csv")
+```
+
+## 0. Pandas data types
+
+Pandas support `Series` and `DataFrames` data objects.
+
+### 0.1 Series
+A `series` is like a column in a table. To create a `series`, we can list out the elements (i.e., values) in a pair of square brackets `[ ]` and transform it into a `series` object using `Series()`. For example:
+
+```{pyodide}
+a = [1, "apple", 3.45] # This is a list
+
+# This is a Series object
+pd.Series(a) 
+```
+
+### 0.2 Dataframe
+A `DataFrame` is similar to a table with rows and columns. We can create a table as a dictionary using curvy brackets `{ }`, where the key is the variable name and the value for each variable are stored in `[ ]` after a `:`. Note that all columns should have the same number of entries in the value. We can then transform the dict into a `DataFrame` object using `DataFrame()`. For example:
+
+```{pyodide}
+data = {
+  "Height": [150, 165, 180],
+  "Weight": [50, 60, 75]
+}
+
+#This is a DataFrame object
+
+pd.DataFrame(data)
+```
+
+## 1. Load data
+
+Depending on the data file type, we can use
+
+-   `read_csv()`
+-   `read_json()`
+-   `read_table()`
+-   `read_excel()`
+
+to load in the data and save it as a `DataFrame` object.
+
+::: {.panel-tabset group="language"}
+
+# Python
+```{pyodide}
+#| edit: false
+# Load data
+df = pd.read_csv("data/nhanes_CVD_risk_dataset.csv")
+
+# Check data dimension
+df.shape
+```
+
+# R
+```{webr}
+#| edit: false
+#| completion: false
+
+df = read_csv("data/nhanes_CVD_risk_dataset.csv")
+dim(df)
+```
+
+:::
+
+Using `shape`, we can check that the dataset consists of 409 rows and 12 columns. To take a quick look of the data, display the first k rows using `head(k)` or the last k rows using `tail(k)`. Let's view the first 5 rows of our data.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+df.head(5)
+```
+
+# R
+```{webr}
+#| edit: false
+#| completion: false
+df |> head(5)
+```
+:::
+
+As an exercise, display the last 5 rows from the dataset `df`.
+
+```{pyodide}
+#| exercise: ex_1
+
+```
+
+```{pyodide}
+#| exercise: ex_1
+#| check: true
+
+feedback = None
+if (result.equals(df.tail(5))):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+## 2. Data Cleaning
+
+### 2.1 Empty/ NA Cell
+
+To remove ALL rows that contain empty cells in the data, we can use `dropna()`.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+removed_all_NA_rows = df.dropna() # All columns has no NA values now
+removed_all_NA_rows 
+```
+
+# R
+```{webr}
+#| edit: false
+
+df |> drop_na()
+```
+:::
+
+```{pyodide}
+removed_all_NA_rows.shape
+```
+
+By checking the cleaned data dimension, we can confirm that there are 409-379 = 30 rows consist of at least one NA value.
+
+We can also remove rows that have NA values in certain columns by specifying the subset of columns in `dropna()`.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# Only remove rows with NA in these two variables.
+df.dropna(subset=['Sedentary_min', 'Heart_attack']) 
+
+```
+
+# R
+```{webr}
+#| edit: false
+
+df |> drop_na("Sedentary_min", "Heart_attack")
+```
+:::
+
+
+If you do not save the object after dropping NA values, the original data remains unchanged. There is a handy option that allows you to alter the original data directly by setting `inplace = True`. In that case, running `df.dropna(inplace = True)` would not output anything.
+
+Alternatively, we can also replace NA with other values using `fillna()`. For example, `df.fillna(130, inplace = True)` will replace all NA values in the original dataframe with 130. We can also specify the replacement values for each column. For example:
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+df.fillna({"Sedentary_min": 0,  # Replace all NA in Sedentary_min as 0
+           "Heart_attack" : "Unknown"})  # Replace all NA in Heart_attack as "Unknown"
+
+```
+
+# R
+```{webr}
+#| edit: false
+
+df$Sedentary_min[is.na(df$Sedentary_min)] <- 0
+
+df$Heart_attack[is.na(df$Heart_attack)] <- "Unknown"
+```
+:::
+
+We can also replace them with mean, median or mode.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# This calculates the mean of the Sedentary_min column
+s_min_mean = df["Sedentary_min"].mean()
+
+# Replace NA with mean
+df.fillna({"Sedentary_min": s_min_mean}) 
+```
+
+# R
+```{webr}
+#| edit: false
+s_min_mean = df |> summarize(mean(Sedentary_min))
+
+df$Sedentary_min[is.na(df$Sedentary_min)] <- s_min_mean
+```
+:::
+
+As an exercise, try to replace all missing values in "Sedentary_min" by the median.
+
+```{pyodide}
+#| exercise: ex_2
+# Median of the Sedentary_min column
+s_min_median = _________________
+
+# Replace NA with median using df.fillna()
+df.fillna({"_______": ________})  
+```
+
+
+```{pyodide}
+#| exercise: ex_2
+#| check: true
+
+s_min_median = df["Sedentary_min"].median() # Median of the Sedentary_min column
+answer = df.fillna({"Sedentary_min": s_min_median}) # Replace NA with median
+
+feedback = None
+if (result.equals(answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+### 2.2 Wrong Data
+
+Sometimes, wrong data does not have to be empty cells, it can just be an wrong but valid entry. To replace these with correct values, we can use `loc[row_index, column_name]` to locate the entry.
+
+For instance, suppose row 156 in the data records 1.75 instead of 175 in weight when it is measured in lb. We can fix it by running `df.[156, "Weight"] = 175`.
+
+If we know that a variable has some certain constrain, such as weight must be below 500lb. We can remove all out-of-boundary entries using and if-then statement inside a for loop.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+for x in df.index:                  # Looping over all rows
+  if df.loc[x, "Weight"] > 500:     # Check constrain
+    df.drop(x, inplace = True)      # Remove the row when "if" is statisfied
+```
+
+# R
+```{webr}
+#| edit: false
+
+df <- df |>
+  filter(Weight <= 500)
+```
+:::
+
+### 2.3 Duplicate Rows
+
+Duplicate rows are rows that have been recorded more than one time. We can use `duplicated()` to check if each row has a duplicate, it will give TRUE/FALSE for each row. Wrapping it with `sum()` allows us to summarize how many duplicate rows there are in the data.
+
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# No duplicate rows in our data
+sum(df.duplicated())
+```
+
+# R
+```{webr}
+#| edit: false
+
+sum(duplicated(df))
+```
+:::
+
+In case when we want to remove duplicate rows, we can do this by `drop_duplicates()`, there is a `inplace = True` option allowing us to remove it directly on the original data as well. i.e., `df.drop_duplicates(inplace = True)`.
+
+### 2.4 Extracting columns 
+
+To extract a column from the dataframe, we use the square brackets `[ ]`.
+
+-   `df[column_name]` stores as a Series (only applicable when we select one variable)
+-   `df[[column_name]]` stores a DataFrame
+
+For example, we can extract "ID" and "Weight" columns from `df` by:
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# This is a Series
+df["Weight"] 
+```
+
+# R
+```{webr}
+#| edit: false
+
+df |> select("Weight")
+```
+:::
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# This is a DataFrame
+df[["ID", "Weight"]]
+```
+
+# R
+```{webr}
+#| edit: false
+
+df |> select("ID","Weight")
+```
+:::
+
+As an exercise, choose to display only `Age`, `Gender`, and `BMI` from `df`.
+
+```{pyodide}
+#| exercise: ex_3
+
+```
+
+```{pyodide}
+#| exercise: ex_3
+#| check: true
+
+answer = df[["Age", "Gender", "BMI"]]
+
+feedback = None
+if (result.equals(answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+Pandas also have a `filter()` function that selects a subset of variables. But note that this filter function serves as a different role than filter in R.
+
+```{pyodide}
+df.filter(['ID', 'Weight'])
+```
+
+### 2.5 Filtering rows 
+
+Similar to R, we can filter rows in the dataset based on some condition. The coditional operations include:
+
+-   `>` : greater than
+-   `<` : smaller than
+-   `==` : equal to
+-   `!=` : not equal to
+-   `&` : AND
+-   `|` : OR
+
+We can extract rows using `df[conditional_statement]`. Different from R, we need to specify a Series (single squared bracket) object in the conditional statement such as `df["variable_name"] > 20` instead of `"variable_name" > 20`. If there are more than one conditions, remember to wrap each condition with `()`.
+
+Here are some examples:
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# Extract the row with 93731 as ID
+
+df[df["ID"] == 93731] 
+
+#`df["ID" == 93731]` would not work
+```
+
+# R
+```{webr}
+#| edit: false
+
+df |> filter("ID" == 93731)
+```
+:::
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# Must statisfy both filtering conditions
+# Cond 1: weight > 120
+# Cond 2: weight < 150
+# Hence 120 < weight < 150
+
+df[(df["Weight"] > 120 ) & (df["Weight"] < 150)]
+```
+
+# R
+```{webr}
+#| edit: false
+
+df |> filter(("Weight" > 120) & ("Weight" < 150))
+```
+:::
+
+As an exercise, filter for patients that have "Age" above 40 and experienced "Heart_attack" (indicated as "Yes").
+
+```{pyodide}
+#| exercise: ex_4
+
+```
+
+```{pyodide}
+#| exercise: ex_4
+#| check: true
+
+answer = df[(df["Age"] > 40) & (df["Heart_attack"] == "Yes")]
+
+feedback = None
+if (result.equals(answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+### 2.6 Creating new variables 
+
+To create a new variable, simply store the list of values into `df["new_variable_name"]`. You can create the new values by setting them as a constant value, some calculations of exisiting variable or conditional assignment.
+
+Here are some examples:
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# Constant value
+df["NewVar"] = 1 
+```
+
+# R
+```{webr}
+#| edit: false
+
+df <- df |> mutate("NewVar" = 1)
+```
+:::
+
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# Create variable using existing variable
+df["Weight_kg"] = df["Weight"] * 0.453592
+
+```
+
+# R
+```{webr}
+#| edit: false
+
+df <- df |> mutate(Weight_kg = Weight*0.453592)
+```
+:::
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# Create a variable based on a function
+def convert(height_in): 
+    return height_in * 2.54 
+
+df["Height_cm"] = df["Height"].apply(convert)
+```
+
+# R
+```{webr}
+#| edit: false
+convert <- function(height_in){
+  height_in * 2.54
+} 
+
+df <- df |> mutate(Height_cm = convert(Height))
+```
+:::
+
+As an exercise, create a new column that stores patients' age 10 years later. Define this new column as `age_10_years_later`.
+
+```{pyodide}
+#| exercise: ex_5
+# Create new column here:
+______________
+
+# Do not edit below
+df["age_10_years_later"]
+```
+
+```{pyodide}
+#| exercise: ex_5
+#| check: true
+
+df["age_10_years_later"] = df["Age"] + 10
+
+answer = df["age_10_years_later"]
+
+feedback = None
+if (result.equals(answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+### 2.7 Creating new variable using conditional assignment 
+
+There are two aspects:
+
+With `numpy`, `where(conditional_statment, true_assignment, false_assigment)` denotes that the value will be `true_assignment` is `conditional_statment` is satisfied, and `false_assigment` otherwise. All rows will be assigned with either `true_assignment` or `false_assigment`.
+
+With `pandas`, `df["Variable"].where(conditional_statment)` will assign the corresponding `Variable` value of that row if it satisfies the `conditional_statment`, otherwise `NaN`.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# Rows with weight over 120 classified as "High", and "Normal" otherwise.
+# New variable name is "Weight_Class"
+
+df["Weight_Class"] = np.where(df["Weight"] > 120, "High", "Normal")
+```
+
+# R
+```{webr}
+#| edit: false
+df <- df |> 
+  mutate(Weight_Class = case_when(Weight > 120 ~ "High",
+                                  TRUE ~ "Normal"))
+# OR:
+df$Weight_Class <- ifelse(df$Weight > 120, "High", "Normal")
+```
+:::
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# Only Female rows (encoded as Gender = 2) retain "Weight" value
+# New variable name is "Female_Weight"
+
+df["Female_Weight"] = df["Weight"].where(df["Gender"] == 2)
+```
+
+# R
+```{webr}
+#| edit: false
+df <- df %>%
+  mutate(Female_Weight = if_else(Gender == 2, Weight, NA_real_))
+
+# OR:
+df$Female_Weight <- ifelse(df$Gender == 2, df$Weight, NA)
+
+```
+:::
+
+```{pyodide}
+# Check the updated dataframe
+df[["NewVar", "Weight_kg","Height_cm","Weight_Class","Female_Weight"]].tail(5)
+```
+
+As an exercise, create a new column that denote `Gender` in terms of `Male`(1) and `Female`(2). Name this new column as `gender_text`.
+
+```{pyodide}
+#| exercise: ex_6
+# Create new column here:
+______________
+
+# Do not edit below
+df["gender_text"]
+```
+
+```{pyodide}
+#| exercise: ex_6
+#| check: true
+
+df["gender_text"] =  np.where(df["Gender"] == 1, "Male", "Female")
+
+answer = df["gender_text"]
+
+feedback = None
+if (result.equals(answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+### 2.8 Group summaries 
+
+We can use `groupby()` to organize the dataset by a variable of interest.
+
+We can then compute summary statistics for each group on a numerical variable by chaining on the appropriate aggregation functions like
+
+-   `mean()`
+-   `median()`
+-   `mode()`
+-   `max()`
+-   `min()`
+-   `std()`
+-   `var()`
+-   `count()`
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# Group by Gender, select "Weight" column, extract the maximum value
+df.groupby("Gender")[["Weight"]].max() 
+```
+
+# R
+```{webr}
+#| edit: false
+df |> 
+  group_by(Gender)|> 
+  summarize(max(Weight))
+
+```
+:::
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# We can group by more than one variable
+df.groupby(["Gender","Stroke"])[["Weight"]].max() 
+```
+
+# R
+```{webr}
+#| edit: false
+df |> 
+  group_by(Gender, Stroke)|> 
+  summarise(max(Weight), .groups = "drop")
+
+```
+:::
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# We can calculate group means for more than 1 variable
+df.groupby("Gender")[["Weight", "Height"]].mean() 
+```
+
+# R
+```{webr}
+#| edit: false
+df |> 
+  group_by(Gender)|> 
+  summarize(mean(Weight), mean(Height))
+
+```
+:::
+
+As an exercise, evaluate the group level means of `BMI` by `Heart_attack` status.
+
+```{pyodide}
+#| exercise: ex_7
+
+```
+
+```{pyodide}
+#| exercise: ex_7
+#| check: true
+
+answer = df.groupby("Heart_attack")[["BMI"]].mean()
+
+feedback = None
+if (result.equals(answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+### 2.9 Transforming categorical variables into dummy variables
+
+Often time, when we fit regression models with categorical predictors, we have to represent the corresponding levels using dummy indicators. To create these dummy variables, we use `get_dummies`. The `drop_first=True` suggests that we only create k-1 dummy variables if there are k levels by dropping the fist level.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+df_dummy_encoded = pd.get_dummies(df, columns=["Ethnicity"], drop_first=True)
+```
+
+# R
+```{webr}
+#| edit: false
+df_dummy_encoded <- df |>
+  mutate(Ethnicity = factor(Ethnicity)) |>
+  pivot_wider(names_from = Ethnicity, 
+              values_from = Ethnicity, 
+              values_fn = length, 
+              values_fill = 0 ) |> 
+  select(-`Mexican American`) # drop first level
+```
+:::
+
+The dummy variables are coded as `originalname_levelname`. You can choose to format them using options in `get_dummies`.
+
+```{pyodide}
+df_dummy_encoded[["Ethnicity_Other Hispanic"]]
+```
+
+```{pyodide}
+df_dummy_encoded[["Ethnicity_non-Hispanic white"]]
+```
+
+```{pyodide}
+# Show data column lists
+df_dummy_encoded.columns.tolist()
+```
+
+## 3. Correlation
+
+The Pandas module also allows us to calculate the relationship between each column in your data set using `corr()`. By setting `numeric_only = True`, it ignores all non-numerical columns.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+df.corr(numeric_only= True)
+```
+
+# R
+```{webr}
+#| edit: false
+df |> 
+  select(where(is.numeric)) |>
+  cor()
+```
+:::
+

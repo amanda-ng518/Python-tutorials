@@ -1,0 +1,20 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Python Tutorial"
+  navbar:
+    left:
+      - href: Numpy.qmd
+        text: Numpy
+      - href: Pandas.qmd
+        text: Pandas
+      - href: Scikitlearn.qmd
+        text: Scikitlearn
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true

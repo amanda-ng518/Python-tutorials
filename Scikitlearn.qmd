@@ -1,0 +1,780 @@
+---
+title: "Scikit-learn Tutorial"
+format: live-html
+engine: knitr
+toc: true
+resources:
+  - data
+webr:
+  packages:
+    - dplyr
+    - tidyr
+    - tidyverse
+    - pROC
+    - glmnet
+pyodide:
+  packages:
+    - pandas
+    - numpy
+    - sklearn
+    - matplotlib
+live:
+  show-hints: true
+  show-solutions: true
+---
+
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}}
+{{< include ./_extensions/r-wasm/live/_gradethis.qmd >}}
+
+Scikit‑learn is one of the most widely used machine learning libraries in Python. It offers clean, consistent APIs for building, training, and evaluating statistical models—from simple linear regressions to more advanced ensemble methods. This tutorial introduces several foundational models and demonstrates how to apply them to real‑world datasets.
+
+```{pyodide}
+#| autorun: true
+#| runbutton: false
+#| edit: false
+# Import libraries
+
+import numpy as np 
+import pandas as pd
+```
+
+## 0. Data Preparation
+
+Let's first load in the data and remove all missing values.
+
+```{pyodide}
+# Load data
+df = pd.read_csv("data/nhanes_CVD_risk_dataset.csv")
+
+# Drop NA values 
+df.dropna(inplace = True)
+
+# Quick look at the data
+df.head(5)
+```
+
+```{webr}
+#| include: false
+
+df = read_csv("data/nhanes_CVD_risk_dataset.csv")
+df = df%>%drop_na()
+```
+
+```{pyodide}
+#| setup: true
+#| include: false
+#| autorun: true
+#| exercise: 
+#|    - ex_1
+#|    - ex_2
+#|    - ex_3
+#|    - ex_4
+#|    - ex_5
+#|    - ex_6
+#|    - ex_7
+
+import numpy as np 
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LogisticRegression
+df = pd.read_csv("data/nhanes_CVD_risk_dataset.csv")
+df = df%>%drop_na()
+```
+
+## 1. Linear Regression
+
+When the outcome variable is continuous, the simpliest model is a linear regression model. Suppose we are interested in modeling `Height` with `Weight` and `Age`. To fit a linear regression model, we first need to import `LinearRegression` from `sklearn.linear_model`.
+
+```{pyodide}
+#| edit: false
+# Import LR model
+from sklearn.linear_model import LinearRegression
+```
+
+Then, create the predictors X and outcome y arrays from `df`.
+
+```{pyodide}
+# Define predictors and response
+X = df[["Weight", "Age"]]
+y = df[["Height"]]
+```
+
+Now, we are ready to fit a linear regression model. We begin by defining the model with `LinearRegression`, the `fit_intercept` option determine whether you would like to get an estimate for the intercept. Use `fit(X,y)` to fit the model. The first parameter is always your predictors dataframe and the second parameter is your outcome dataframe.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# Define a linear regression model
+model1 = LinearRegression(fit_intercept=True) 
+
+# Fit the model
+model1.fit(X, y)
+```
+
+# R
+```{webr}
+#| edit: false
+
+model1 = lm(Height ~ Weight + Age, data = df)
+```
+:::
+
+We can show the fitted model coefficients using `.intercept_` and `.coef_`.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+# Show results
+print("Intercept estimate:", model1.intercept_)
+print("Coefficient estimates:", model1.coef_) 
+```
+
+# R
+```{webr}
+#| edit: false
+# All coefficients
+coef(model1)
+
+# Model summary
+summary(model1)
+```
+:::
+
+Suppose we are now interested in modeling `Height` with `Weight` and `Ethnicity`. When the predictors are categorical, we have to first create dummy variables (as introduced in the Pandas Tutorial).
+
+```{pyodide}
+# Create dummy variables for "Ethnicity"
+df_encoded = pd.get_dummies(df, columns=["Ethnicity"], drop_first=True)
+
+# Show data column lists
+df_encoded.columns.tolist()
+```
+
+Now, we can define the predictors and response dataframe with dummy variables and fit the model.
+
+::: {.panel-tabset group="language"}
+# Python
+
+```{pyodide}
+# Define predictors and response
+X = df_encoded[["Weight", 
+        'Ethnicity_Other Hispanic',
+     'Ethnicity_non-Hispanic Asian',
+     'Ethnicity_non-Hispanic black',
+     'Ethnicity_non-Hispanic white',
+     'Ethnicity_other non-Hispanic races']]
+y = df_encoded[["Height"]]
+
+# Define a linear regression model
+model2 = LinearRegression(fit_intercept=True) 
+
+# Fit the model
+model2.fit(X, y)
+```
+
+# R
+```{webr}
+#| edit: false
+
+model2 = lm(Height ~ Weight + as.factor(Ethnicity), data = df)
+```
+:::
+
+Similarly, we can show the fitted model coefficients using `.intercept_` and `.coef_`.
+
+```{pyodide}
+# Show results
+print("Intercept estimate:", model2.intercept_)
+print("Coefficient estimates:", model2.coef_) 
+```
+
+Using `score` on a linear regression model will return the coefficient of determination.
+
+::: {.panel-tabset group="language"}
+# Python
+
+```{pyodide}
+# R^2
+model2.score(X, y)
+```
+
+# R
+```{webr}
+#| edit: false
+
+summary(model2)$r.squared
+
+# Use adjusted R^2 for multiple linear regression
+summary(model2)$adj.r.squared
+```
+:::
+
+As an exercise, fit a model to explain `BMI` using `Weight` and `Height`.
+
+```{pyodide}
+#| exercise: ex_1
+#| # Define predictors and response
+X = ________________
+y = _________
+
+#| # Define a linear regression model
+bmi_model = __________________
+
+# Fit the model
+______________
+
+# Non intercept coefficient estimates (Do not edit)
+bmi_model.coef_
+
+```
+
+```{pyodide}
+#| exercise: ex_1
+#| check: true
+
+#| # Define predictors and response
+X = df[["Weight", "Height"]]
+y = df[["BMI"]]
+
+#| # Define a linear regression model
+bmi_model = LinearRegression(fit_intercept=True) 
+
+# Fit the model
+bmi_model.fit(X, y)
+
+answer = bmi_model.coef_
+
+feedback = None
+if (result.equals(answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+
+## 2. Logistic Regression
+
+Suppose we are interested in modeling `Stroke` with `Weight` and `LDL_Cholesterol`. When the outcome variable is binary, the simplest model is a logistic regression model. To fit a logistic regression model, we first need to import `LogisticRegression` from `sklearn.linear_model`.
+
+```{pyodide}
+#| edit: false
+# Import LR model
+from sklearn.linear_model import LogisticRegression
+```
+
+Encode the binary outcome variable so that they entires are no longer text. We can use `map` to do it. In the following code, we are mapping "Yes" to 1 and "No" to 0 when redefining the `Stroke` column.
+
+
+```{pyodide}
+# Encode the outcome variable
+df['Stroke'] = df['Stroke'].map({'Yes': 1, 'No': 0})
+```
+
+Now, we can define the predictors and response dataframe and fit the model.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+#| warning: False
+
+# Define predictors and response
+X = df[["Weight", "LDL_Cholesterol"]]
+y = df["Stroke"]
+
+# Define a logistic regression model
+model = LogisticRegression() 
+
+# Fit the model
+model.fit(X, y)
+```
+
+# R
+```{webr}
+#| edit: false
+df$Stroke <- as.factor(df$Stroke)
+
+model <- glm(Stroke ~ Weight + LDL_Cholesterol,
+             data = df,
+             family = binomial(link = "logit"))
+```
+:::
+
+Show the fitted model coefficients using `.intercept_` and `.coef_`.
+
+```{pyodide}
+#| warning: False
+#| 
+# Show results
+print("Intercept estimate:", model.intercept_)
+print("Coefficient estimates:", model.coef_) 
+```
+
+As an exercise, fit a logistic regression model to predict `Heart_attack` status using `Weight` and `Height`.
+
+```{pyodide}
+#| exercise: ex_2
+# Encode the outcome variable
+df['Heart_attack'] = df['Heart_attack'].map({____________})
+
+#| # Define predictors and response
+X = ________________
+y = _________
+
+#| # Define a logistic regression model
+heart_model = __________________
+
+# Fit the model
+______________
+
+# Non intercept coefficient estimates (Do not edit)
+heart_model.coef_
+
+```
+
+```{pyodide}
+#| exercise: ex_2
+#| check: true
+
+# Encode the outcome variable
+df['Heart_attack'] = df['Heart_attack'].map({'Yes': 1, 'No': 0})
+
+#| # Define predictors and response
+X = df[["Weight", "Height"]]
+y = df[["Heart_attack"]]
+
+#| # Define a logistic regression model
+heart_model = LogisticRegression(fit_intercept=True) 
+
+# Fit the model
+heart_model.fit(X, y)
+
+answer = heart_model.coef_
+
+feedback = None
+if (result.equals(answer)):
+  feedback = { "correct": True, "message": "Nice work!" }
+else:
+  feedback = { "correct": False, "message": "That's incorrect, sorry." }
+feedback
+```
+
+
+Often time, we will do a train-test split on the data to evaluate the model. This can be done through `train_test_split`, which is a method that can be imported from `sklearn.model_selection`. We need to specify the predictors X and outcome y will be splited, the proportion that goes into the testing data, as well as a random seed.
+
+Below, we are splitting the dataset as train-test in 70:30 proportion with a random seed at 228.
+
+::: {.panel-tabset group="language"}
+# Python
+
+```{pyodide}
+#| warning: False
+#| 
+from sklearn.model_selection import train_test_split
+
+# Split into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=228)
+```
+
+# R
+```{webr}
+#| edit: false
+
+set.seed(228) 
+
+train_index <- sample(seq_len(nrow(df)), size = 0.7 * nrow(df))
+
+train <- df[train_index, ]
+test  <- df[-train_index, ]
+
+```
+:::
+
+We can fit our model using the training datasets `X_train, y_train`.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+#| warning: False
+# Fit logistic regression
+model3 = LogisticRegression()
+model3.fit(X_train, y_train)
+```
+
+# R
+```{webr}
+#| edit: false
+
+model3 = glm(Stroke ~ Weight + LDL_Cholesterol,
+             data = train,
+             family = binomial(link = "logit"))
+```
+:::
+
+With the fitted model, make prediction on the unseen data `X_test` using `predict()`.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+#| warning: False
+# Evaluate the model
+y_pred = model3.predict(X_test)
+```
+
+# R
+```{webr}
+#| edit: false
+y_pred = ifelse(predict(model3, test, type = "response") > 0.5, 1, 0)
+```
+:::
+
+To evaluate the prediction performance, we can compute the confusion matrix and accuracy. These performance metrics can be imported from `sklearn.metrics`. More details can be found at [sklearn metrics](https://scikit-learn.org/stable/api/sklearn.metrics.html).
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+#| warning: False
+from sklearn.metrics import confusion_matrix
+
+# Confusion matrix
+print(confusion_matrix(y_test, y_pred))
+# TP FP
+# TN FN
+```
+
+# R
+```{webr}
+#| edit: false
+conf_matrix <- table(Predicted = y_pred, Actual = test$Stroke)
+conf_matrix
+
+```
+:::
+
+```{pyodide}
+#| warning: False
+#| 
+# Accuracy
+model3.score(X_test,y_test)
+```
+
+Aside from metric values, we can also generate the ROC curve and calculate area under curve (AUC). To do so, we first obtain the probability of each test observation being classified into the "yes" class using `predict_proba`. The returned estimates for all classes are ordered by the label of classes.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+#| warning: False
+#| 
+from sklearn.metrics import roc_curve, auc
+import matplotlib.pyplot as plt
+
+# ROC curve
+y_prob = model3.predict_proba(X_test)[:, 1] # ":" means all rows, we extract all predicted probablities for class 1
+
+fpr, tpr, _ = roc_curve(y_test, y_prob) # returns FPR, TPR, thresholds
+roc_auc = auc(fpr, tpr) # calculate AUC value
+
+# Visualize the plot
+plt.plot(fpr, tpr, label=f"AUC = {roc_auc:.2f}")
+plt.plot([0, 1], [0, 1], 'k--')
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("ROC Curve")
+plt.legend()
+plt.grid(True)
+plt.show()
+```
+
+# R
+```{webr}
+#| edit: false
+#| warning: false
+library(pROC)
+
+# predicted probabilities
+prob <- predict(model3, test, type = "response")
+
+# ROC object
+roc_obj <- roc(test$Stroke, prob)
+
+# Plot ROC curve
+plot(roc_obj, col = "blue", lwd = 2, 
+     main = "ROC Curve", 
+     xlab = "True Positive Rate",
+     ylab = "False Positive Rate")
+
+# Add AUC text to the plot
+auc_value <- auc(roc_obj)
+text(
+  x = 0.2, y = 0.2,
+  labels = paste("AUC =", round(auc_value, 3)),
+  cex = 1.0
+)
+```
+:::
+
+## 3. LASSO and Ridge Regression
+
+When we have too many predictors, we may want to eliminate the less important ones for better model interpretation. This can be done through LASSO and Ridge regression to penalize excess predictors.
+
+LASSO and Ridge differ only by the weight of the penalization, with ridge imposing heavier weights.
+
+First, load all the necessary methods.
+
+```{pyodide}
+#| edit: false
+# Load packages
+from sklearn.linear_model import RidgeCV, LassoCV, lasso_path, Lasso, Ridge
+from sklearn.preprocessing import StandardScaler # To standardize predictors
+from sklearn.metrics import mean_squared_error # MSE calculation to evaluate model
+from sklearn.model_selection import train_test_split
+```
+
+Then, define the predictors and response variable. In application, people tend to standardize the data. This can be performed using `StandardScaler()`.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+#| warning: False
+#| 
+# Define predictors and response
+X = df[["Weight", "Age"]]
+y = df["Height"]
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=228)
+
+# Standardize data, optional.
+scaler = StandardScaler() 
+X_train_scaled = scaler.fit_transform(X_train) # Use fit_transform on training data
+X_test_scaled = scaler.transform(X_test) # Use transform on testing data (this standardizes the columns using test data mean and sd)
+```
+
+# R
+```{webr}
+#| edit: false
+# Define predictors and response
+X <- df[, c("Weight", "Age")]
+y <- df$Height
+
+# Split data
+set.seed(228)
+train_index <- sample(seq_len(nrow(df)), size = 0.8 * nrow(df))
+X_train <- X[train_index, ]
+X_test  <- X[-train_index, ]
+y_train <- y[train_index]
+y_test  <- y[-train_index]
+
+# Standardize data
+# Fit scaler on training data
+train_means <- apply(X_train, 2, mean)
+train_sds   <- apply(X_train, 2, sd)
+
+# Apply to training data
+X_train_scaled <- scale(X_train, center = train_means, scale = train_sds)
+
+# Apply to test data using training stats
+X_test_scaled  <- scale(X_test, center = train_means, scale = train_sds)
+```
+:::
+
+In penalized regression, we leverage cross validation to choose the best model (i.e. which predictors to retain). The general procedure involves repeatedly partitioning the available data into multiple folds (i.e. subsets), training the model on some subsets, and testing it on the remaining ones.
+
+This code fits a range of LASSO model with varying penalty `alpha` and choose the best model using leave-one-out cross validation.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+#| warning: False
+#| 
+# Fit LassoCV
+alphas = np.logspace(-3, 2, 50) # Regularization values
+
+lasso_cv = LassoCV(alphas=alphas, cv=5) # cv = number of folds
+lasso_fitted_model = lasso_cv.fit(X_train_scaled, y_train)
+```
+
+# R
+```{webr}
+#| edit: false
+library(glmnet)
+
+# Define lambda grid (same as alphas in Python)
+lambda_grid <- 10^seq(-3, 2, length.out = 50)
+
+# Fit LASSO with CV
+lasso_cv <- cv.glmnet(
+  x = X_train_scaled,
+  y = y_train,
+  alpha = 1,                 # alpha = 1 here refers to LASSO
+  lambda = lambda_grid,
+  nfolds = 5
+)
+
+# Extract fitted model
+lasso_fitted_model <- lasso_cv$glmnet.fit
+
+```
+:::
+
+This code fits a range of Ridge model with varying penalty `alpha` and choose the best model using leave-one-out cross validation (LOOCV).
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+#| warning: False
+#| 
+# Fit RidgeCV 
+ridge_cv = RidgeCV(alphas=alphas, cv= None, store_cv_results = True) # setting cv None = leave-one-out
+ridge_fitted_model = ridge_cv.fit(X_train_scaled, y_train)
+```
+
+# R
+```{webr}
+#| edit: false
+
+# Define lambda grid (same as alphas in Python)
+lambda_grid <- 10^seq(-3, 2, length.out = 50)
+
+# Fit Ridge with LOOCV
+ridge_cv <- cv.glmnet(
+  x = X_train_scaled,
+  y = y_train,
+  alpha = 0,                     # alpha = 0 here refers to Ridge
+  lambda = lambda_grid,
+  nfolds = nrow(X_train_scaled)  # LOOCV
+)
+
+# Extract fitted model
+ridge_fitted_model <- ridge_cv$glmnet.fit
+
+```
+:::
+
+We can determine the best penality term using `.alpha_` and return the mean testing squared error using `mean_squared_error(y_test, model.predict(x_test))`.
+
+::: {.panel-tabset group="language"}
+# Python
+```{pyodide}
+#| warning: False
+#| 
+# Best Regularization constant chosen as model with lowest MSE
+print("Best alpha (Ridge):", ridge_cv.alpha_)
+print("Best alpha (Lasso):", lasso_cv.alpha_)
+
+# MSE values
+print("Test MSE (Ridge):", mean_squared_error(y_test, ridge_cv.predict(X_test_scaled)))
+print("Test MSE (Lasso):", mean_squared_error(y_test, lasso_cv.predict(X_test_scaled)))
+```
+
+# R
+```{webr}
+#| edit: false
+# Best lambda (equivalent to alpha_ in sklearn)
+cat("Best lambda (Ridge):", ridge_cv$lambda.min, "\n")
+cat("Best lambda (Lasso):", lasso_cv$lambda.min, "\n")
+
+# Predictions
+ridge_pred <- predict(ridge_cv, newx = as.matrix(X_test_scaled), s = "lambda.min")
+lasso_pred <- predict(lasso_cv, newx = as.matrix(X_test_scaled), s = "lambda.min")
+
+# Test MSE
+ridge_mse <- mean((y_test - ridge_pred)^2)
+lasso_mse <- mean((y_test - lasso_pred)^2)
+
+cat("Test MSE (Ridge):", ridge_mse, "\n")
+cat("Test MSE (Lasso):", lasso_mse, "\n")
+
+```
+:::
+
+We can also generate a plot to show the testing MSE trend as we impose different penalties.
+
+```{pyodide}
+#| warning: False
+#| 
+lasso_mean_cv_errors = np.mean(lasso_cv.mse_path_, axis=1)
+
+# Plot
+plt.figure(figsize=(7, 5))
+plt.plot(lasso_cv.alphas_, lasso_mean_cv_errors, marker='o')
+plt.axvline(lasso_cv.alpha_, color='red', linestyle='--', label=f"Best alpha = {lasso_cv.alpha_:.4f}")
+plt.xscale('log')
+plt.xlabel("Alpha")
+plt.ylabel("Mean CV Error")
+plt.title("Lasso Cross-Validation Error vs Alpha")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+```
+
+```{pyodide}
+#| warning: False
+#| 
+ridge_mean_cv_errors = np.mean(ridge_cv.cv_results_, axis=0)[0]
+
+# MSE error vs alpha plot
+plt.figure(figsize=(7, 5))
+plt.plot(ridge_cv.alphas, ridge_mean_cv_errors, marker='o')
+plt.axvline(ridge_cv.alpha_, color='red', linestyle='--', label=f"Best alpha = {ridge_cv.alpha_:.4f}")
+plt.xscale('log')
+plt.xlabel("Alpha")
+plt.ylabel("Mean CV Error")
+plt.title("Ridge Cross-Validation Error vs Alpha")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+```
+
+## 4. K-Nearest Neighbour
+
+KNN is a non‑parametric method (so we do not estimate any coefficients, unlike regression models). For a given test input, it finds the k nearest training inputs and output a prediction that is the most common label among the neighbours. In short, it makes predictions by looking at the k nearest training samples.
+
+First, import `KNeighborsClassifier` from `sklearn.neighbors`.
+
+```{pyodide}
+#| edit: false
+# Import library
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+```
+
+Then, define the predictors and response variable. Similarly, conduct a train-test split for model validation purpose. This time, we use a 80:20 split.
+
+```{pyodide}
+# Define predictors and response
+X = df[["Weight", "Age"]]
+y = df[["Height"]]
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2)
+```
+
+In practice, we choose k based on cross validation. In this example, let's set it as 5.
+
+```{pyodide}
+# Initialize KNN model
+knn = KNeighborsClassifier(
+    n_neighbors=5,      # k
+    metric="minkowski", # default distance metric
+    p=2                 # p=2 = Euclidean distance
+)
+```
+
+Use `.fit()` and `.predict()` to fit the model and test it on the testing data. Model accuracy can be obtained using `accuracy_score()`.
+
+```{pyodide}
+# Fit model
+knn.fit(X_train, y_train)
+
+# Predict
+y_pred = knn.predict(X_test)
+
+# Accuracy
+acc = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {acc:.3f}")
+
+```
