@@ -1,0 +1,135 @@
+[
+  {
+    "objectID": "Scikitlearn.html",
+    "href": "Scikitlearn.html",
+    "title": "Scikit-learn Tutorial",
+    "section": "",
+    "text": "Scikit‑learn is one of the most widely used machine learning libraries in Python. It offers clean, consistent APIs for building, training, and evaluating statistical models—from simple linear regressions to more advanced ensemble methods. This tutorial introduces several foundational models and demonstrates how to apply them to real‑world datasets."
+  },
+  {
+    "objectID": "Scikitlearn.html#data-preparation",
+    "href": "Scikitlearn.html#data-preparation",
+    "title": "Scikit-learn Tutorial",
+    "section": "0. Data Preparation",
+    "text": "0. Data Preparation\nLet’s first load in the data and remove all missing values."
+  },
+  {
+    "objectID": "Scikitlearn.html#linear-regression",
+    "href": "Scikitlearn.html#linear-regression",
+    "title": "Scikit-learn Tutorial",
+    "section": "1. Linear Regression",
+    "text": "1. Linear Regression\nWhen the outcome variable is continuous, the simpliest model is a linear regression model. Suppose we are interested in modeling Height with Weight and Age. To fit a linear regression model, we first need to import LinearRegression from sklearn.linear_model.\n\n\n\n\n\n\n\n\nThen, create the predictors X and outcome y arrays from df.\n\n\n\n\n\n\n\n\nNow, we are ready to fit a linear regression model. We begin by defining the model with LinearRegression, the fit_intercept option determine whether you would like to get an estimate for the intercept. Use fit(X,y) to fit the model. The first parameter is always your predictors dataframe and the second parameter is your outcome dataframe.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWe can show the fitted model coefficients using .intercept_ and .coef_.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSuppose we are now interested in modeling Height with Weight and Ethnicity. When the predictors are categorical, we have to first create dummy variables (as introduced in the Pandas Tutorial).\n\n\n\n\n\n\n\n\nNow, we can define the predictors and response dataframe with dummy variables and fit the model.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSimilarly, we can show the fitted model coefficients using .intercept_ and .coef_.\n\n\n\n\n\n\n\n\nUsing score on a linear regression model will return the coefficient of determination.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAs an exercise, fit a model to explain BMI using Weight and Height."
+  },
+  {
+    "objectID": "Scikitlearn.html#logistic-regression",
+    "href": "Scikitlearn.html#logistic-regression",
+    "title": "Scikit-learn Tutorial",
+    "section": "2. Logistic Regression",
+    "text": "2. Logistic Regression\nSuppose we are interested in modeling Stroke with Weight and LDL_Cholesterol. When the outcome variable is binary, the simplest model is a logistic regression model. To fit a logistic regression model, we first need to import LogisticRegression from sklearn.linear_model.\n\n\n\n\n\n\n\n\nEncode the binary outcome variable so that they entires are no longer text. We can use map to do it. In the following code, we are mapping “Yes” to 1 and “No” to 0 when redefining the Stroke column.\n\n\n\n\n\n\n\n\nNow, we can define the predictors and response dataframe and fit the model.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nShow the fitted model coefficients using .intercept_ and .coef_.\n\n\n\n\n\n\n\n\nAs an exercise, fit a logistic regression model to predict Heart_attack status using Weight and Height.\n\n\n\n\n\n\n\n\n\n\n\nOften time, we will do a train-test split on the data to evaluate the model. This can be done through train_test_split, which is a method that can be imported from sklearn.model_selection. We need to specify the predictors X and outcome y will be splited, the proportion that goes into the testing data, as well as a random seed.\nBelow, we are splitting the dataset as train-test in 70:30 proportion with a random seed at 228.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWe can fit our model using the training datasets X_train, y_train.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWith the fitted model, make prediction on the unseen data X_test using predict().\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTo evaluate the prediction performance, we can compute the confusion matrix and accuracy. These performance metrics can be imported from sklearn.metrics. More details can be found at sklearn metrics.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAside from metric values, we can also generate the ROC curve and calculate area under curve (AUC). To do so, we first obtain the probability of each test observation being classified into the “yes” class using predict_proba. The returned estimates for all classes are ordered by the label of classes.\n\nPythonR"
+  },
+  {
+    "objectID": "Scikitlearn.html#lasso-and-ridge-regression",
+    "href": "Scikitlearn.html#lasso-and-ridge-regression",
+    "title": "Scikit-learn Tutorial",
+    "section": "3. LASSO and Ridge Regression",
+    "text": "3. LASSO and Ridge Regression\nWhen we have too many predictors, we may want to eliminate the less important ones for better model interpretation. This can be done through LASSO and Ridge regression to penalize excess predictors.\nLASSO and Ridge differ only by the weight of the penalization, with ridge imposing heavier weights.\nFirst, load all the necessary methods.\n\n\n\n\n\n\n\n\nThen, define the predictors and response variable. In application, people tend to standardize the data. This can be performed using StandardScaler().\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nIn penalized regression, we leverage cross validation to choose the best model (i.e. which predictors to retain). The general procedure involves repeatedly partitioning the available data into multiple folds (i.e. subsets), training the model on some subsets, and testing it on the remaining ones.\nThis code fits a range of LASSO model with varying penalty alpha and choose the best model using leave-one-out cross validation.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThis code fits a range of Ridge model with varying penalty alpha and choose the best model using leave-one-out cross validation (LOOCV).\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWe can determine the best penality term using .alpha_ and return the mean testing squared error using mean_squared_error(y_test, model.predict(x_test)).\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWe can also generate a plot to show the testing MSE trend as we impose different penalties."
+  },
+  {
+    "objectID": "Scikitlearn.html#k-nearest-neighbour",
+    "href": "Scikitlearn.html#k-nearest-neighbour",
+    "title": "Scikit-learn Tutorial",
+    "section": "4. K-Nearest Neighbour",
+    "text": "4. K-Nearest Neighbour\nKNN is a non‑parametric method (so we do not estimate any coefficients, unlike regression models). For a given test input, it finds the k nearest training inputs and output a prediction that is the most common label among the neighbours. In short, it makes predictions by looking at the k nearest training samples.\nFirst, import KNeighborsClassifier from sklearn.neighbors.\n\n\n\n\n\n\n\n\nThen, define the predictors and response variable. Similarly, conduct a train-test split for model validation purpose. This time, we use a 80:20 split.\n\n\n\n\n\n\n\n\nIn practice, we choose k based on cross validation. In this example, let’s set it as 5.\n\n\n\n\n\n\n\n\nUse .fit() and .predict() to fit the model and test it on the testing data. Model accuracy can be obtained using accuracy_score()."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Python_websites",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "Pandas.html",
+    "href": "Pandas.html",
+    "title": "Pandas Tutorial",
+    "section": "",
+    "text": "Pandas is a Python library used for working with data sets, often used to conduct cleaning, exploring, and statistic summary."
+  },
+  {
+    "objectID": "Pandas.html#pandas-data-types",
+    "href": "Pandas.html#pandas-data-types",
+    "title": "Pandas Tutorial",
+    "section": "0. Pandas data types",
+    "text": "0. Pandas data types\nPandas support Series and DataFrames data objects.\n\n0.1 Series\nA series is like a column in a table. To create a series, we can list out the elements (i.e., values) in a pair of square brackets [ ] and transform it into a series object using Series(). For example:\n\n\n\n\n\n\n\n\n\n\n0.2 Dataframe\nA DataFrame is similar to a table with rows and columns. We can create a table as a dictionary using curvy brackets { }, where the key is the variable name and the value for each variable are stored in [ ] after a :. Note that all columns should have the same number of entries in the value. We can then transform the dict into a DataFrame object using DataFrame(). For example:"
+  },
+  {
+    "objectID": "Pandas.html#load-data",
+    "href": "Pandas.html#load-data",
+    "title": "Pandas Tutorial",
+    "section": "1. Load data",
+    "text": "1. Load data\nDepending on the data file type, we can use\n\nread_csv()\nread_json()\nread_table()\nread_excel()\n\nto load in the data and save it as a DataFrame object.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nUsing shape, we can check that the dataset consists of 409 rows and 12 columns. To take a quick look of the data, display the first k rows using head(k) or the last k rows using tail(k). Let’s view the first 5 rows of our data.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAs an exercise, display the last 5 rows from the dataset df."
+  },
+  {
+    "objectID": "Pandas.html#data-cleaning",
+    "href": "Pandas.html#data-cleaning",
+    "title": "Pandas Tutorial",
+    "section": "2. Data Cleaning",
+    "text": "2. Data Cleaning\n\n2.1 Empty/ NA Cell\nTo remove ALL rows that contain empty cells in the data, we can use dropna().\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nBy checking the cleaned data dimension, we can confirm that there are 409-379 = 30 rows consist of at least one NA value.\nWe can also remove rows that have NA values in certain columns by specifying the subset of columns in dropna().\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nIf you do not save the object after dropping NA values, the original data remains unchanged. There is a handy option that allows you to alter the original data directly by setting inplace = True. In that case, running df.dropna(inplace = True) would not output anything.\nAlternatively, we can also replace NA with other values using fillna(). For example, df.fillna(130, inplace = True) will replace all NA values in the original dataframe with 130. We can also specify the replacement values for each column. For example:\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWe can also replace them with mean, median or mode.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAs an exercise, try to replace all missing values in “Sedentary_min” by the median.\n\n\n\n\n\n\n\n\n\n\n\n\n\n2.2 Wrong Data\nSometimes, wrong data does not have to be empty cells, it can just be an wrong but valid entry. To replace these with correct values, we can use loc[row_index, column_name] to locate the entry.\nFor instance, suppose row 156 in the data records 1.75 instead of 175 in weight when it is measured in lb. We can fix it by running df.[156, \"Weight\"] = 175.\nIf we know that a variable has some certain constrain, such as weight must be below 500lb. We can remove all out-of-boundary entries using and if-then statement inside a for loop.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2.3 Duplicate Rows\nDuplicate rows are rows that have been recorded more than one time. We can use duplicated() to check if each row has a duplicate, it will give TRUE/FALSE for each row. Wrapping it with sum() allows us to summarize how many duplicate rows there are in the data.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nIn case when we want to remove duplicate rows, we can do this by drop_duplicates(), there is a inplace = True option allowing us to remove it directly on the original data as well. i.e., df.drop_duplicates(inplace = True).\n\n\n2.4 Extracting columns\nTo extract a column from the dataframe, we use the square brackets [ ].\n\ndf[column_name] stores as a Series (only applicable when we select one variable)\ndf[[column_name]] stores a DataFrame\n\nFor example, we can extract “ID” and “Weight” columns from df by:\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAs an exercise, choose to display only Age, Gender, and BMI from df.\n\n\n\n\n\n\n\n\n\n\n\nPandas also have a filter() function that selects a subset of variables. But note that this filter function serves as a different role than filter in R.\n\n\n\n\n\n\n\n\n\n\n2.5 Filtering rows\nSimilar to R, we can filter rows in the dataset based on some condition. The coditional operations include:\n\n&gt; : greater than\n&lt; : smaller than\n== : equal to\n!= : not equal to\n& : AND\n| : OR\n\nWe can extract rows using df[conditional_statement]. Different from R, we need to specify a Series (single squared bracket) object in the conditional statement such as df[\"variable_name\"] &gt; 20 instead of \"variable_name\" &gt; 20. If there are more than one conditions, remember to wrap each condition with ().\nHere are some examples:\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAs an exercise, filter for patients that have “Age” above 40 and experienced “Heart_attack” (indicated as “Yes”).\n\n\n\n\n\n\n\n\n\n\n\n\n\n2.6 Creating new variables\nTo create a new variable, simply store the list of values into df[\"new_variable_name\"]. You can create the new values by setting them as a constant value, some calculations of exisiting variable or conditional assignment.\nHere are some examples:\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAs an exercise, create a new column that stores patients’ age 10 years later. Define this new column as age_10_years_later.\n\n\n\n\n\n\n\n\n\n\n\n\n\n2.7 Creating new variable using conditional assignment\nThere are two aspects:\nWith numpy, where(conditional_statment, true_assignment, false_assigment) denotes that the value will be true_assignment is conditional_statment is satisfied, and false_assigment otherwise. All rows will be assigned with either true_assignment or false_assigment.\nWith pandas, df[\"Variable\"].where(conditional_statment) will assign the corresponding Variable value of that row if it satisfies the conditional_statment, otherwise NaN.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAs an exercise, create a new column that denote Gender in terms of Male(1) and Female(2). Name this new column as gender_text.\n\n\n\n\n\n\n\n\n\n\n\n\n\n2.8 Group summaries\nWe can use groupby() to organize the dataset by a variable of interest.\nWe can then compute summary statistics for each group on a numerical variable by chaining on the appropriate aggregation functions like\n\nmean()\nmedian()\nmode()\nmax()\nmin()\nstd()\nvar()\ncount()\n\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAs an exercise, evaluate the group level means of BMI by Heart_attack status.\n\n\n\n\n\n\n\n\n\n\n\n\n\n2.9 Transforming categorical variables into dummy variables\nOften time, when we fit regression models with categorical predictors, we have to represent the corresponding levels using dummy indicators. To create these dummy variables, we use get_dummies. The drop_first=True suggests that we only create k-1 dummy variables if there are k levels by dropping the fist level.\n\nPythonR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe dummy variables are coded as originalname_levelname. You can choose to format them using options in get_dummies."
+  },
+  {
+    "objectID": "Pandas.html#correlation",
+    "href": "Pandas.html#correlation",
+    "title": "Pandas Tutorial",
+    "section": "3. Correlation",
+    "text": "3. Correlation\nThe Pandas module also allows us to calculate the relationship between each column in your data set using corr(). By setting numeric_only = True, it ignores all non-numerical columns.\n\nPythonR"
+  },
+  {
+    "objectID": "Numpy.html",
+    "href": "Numpy.html",
+    "title": "Numpy Tutorial",
+    "section": "",
+    "text": "NumPy is an open source Python library designed for fast, efficient numerical computing, especially when working with large datasets or performing mathematical operations. It introduces multidimensional array data structures that enables vectorized operations of which we can apply computations across entire arrays without writing explicit loops, making it faster than standard Python lists for numerical tasks. It also offers a large library of functions for linear algebra, statistics, etc."
+  },
+  {
+    "objectID": "Numpy.html#introduction-to-array",
+    "href": "Numpy.html#introduction-to-array",
+    "title": "Numpy Tutorial",
+    "section": "0. Introduction to Array",
+    "text": "0. Introduction to Array\nIn computer programming, an array is a structure for storing and retrieving data. In an array, each cell stores one element of the data. A 1D array is similar to a list and a 2D array is similar to a table.\nMost NumPy arrays have some restrictions:\n\nAll elements of the array must be of the same type of data\nOnce created, the total size of the array can’t change.\nThe shape must be “rectangular”, not “jagged”; e.g., each row of a two-dimensional array must have the same number of columns."
+  },
+  {
+    "objectID": "Numpy.html#creating-array",
+    "href": "Numpy.html#creating-array",
+    "title": "Numpy Tutorial",
+    "section": "1. Creating Array",
+    "text": "1. Creating Array\nThe simplest way to create an array is to use wrap a list with np.array().\nThe example below creates a 1D array with values 1 to 6.\n\n\n\n\n\n\n\n\nTo create multidimensional array, use nested lists.\nThe example below creates a 2D array with 3 rows, each row has 2 elements.\n\n\n\n\n\n\n\n\nAs an exercise, create an array that looks like this\n\n\n\n23\n45\n67\n\n\n123\n456\n789\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAside from listing the elements explicitly, we can also create array with elements as a range of values, using np.arange().\n\n\n\n\n\n\n\n\nWe can also create an array that stores a range of values with evenly spaced interval in between, using np.linspace().\n\n\n\n\n\n\n\n\nAs an exercise, create an array with 7 evenly spaced elements starting from 12 and ends at 86.\n\n\n\n\n\n\n\n\n\n\n\nSometimes, it is also useful to set up an array with all zeros. We can use np.zeros() to do so. Inside the function, set up the array dimension using a tuple (). You can also specify the data type as integer using dtype=int option.\n\n\n\n\n\n\n\n\nSimilarly, we can set up an array with all onces using np.ones(). Inside the function, set up the array dimension using a tuple ().\n\n\n\n\n\n\n\n\nAside from 0 and 1, we can create an array of given shape, filled with specificed value using np.full((shape), fill_value).\n\n\n\n\n\n\n\n\nWe can also create an array of given shape, filled with random numbers using np.random.rand(). Do not wrap the shape with a tuple here.\n\n\n\n\n\n\n\n\nAs an exercise, create an array with 5 rows and 6 columns, all filled with 8."
+  },
+  {
+    "objectID": "Numpy.html#array-attributes",
+    "href": "Numpy.html#array-attributes",
+    "title": "Numpy Tutorial",
+    "section": "2. Array attributes",
+    "text": "2. Array attributes\nRecall we created an array b as follow:\n\n\n\n\n\n\n\n\nThe number of dimensions (i.e. number of columns in 2D array) of an array is contained in the ndim attribute.\n\n\n\n\n\n\n\n\nThe total number of elements in array is contained in the size attribute.\n\n\n\n\n\n\n\n\nThe shape of an array is a tuple of non-negative integers that specify the number of elements along each dimension. In 2D array, we get a tuple indicating number of rows and number of columns.\n\n\n\n\n\n\n\n\nArrays usually contain elements of only one “data type”. The data type is recorded in the dtype attribute.\n\n\n\n\n\n\n\n\nAs an exercise, report the number of rows, number of columns and total number of elements in the array exercise_4_array (You can use this variable name directly, it has been preloaded)."
+  },
+  {
+    "objectID": "Numpy.html#array-operations",
+    "href": "Numpy.html#array-operations",
+    "title": "Numpy Tutorial",
+    "section": "3. Array operations",
+    "text": "3. Array operations\n\n3.1 Check arrays equality\nYou can check if two arrays are the same using np.array_equal(array_1, array2). For instance\n\n\n\n\n\n\n\n\n\n\n3.2 Arithmetic operations\nTo conduct element-wise arithmetic operations on arrays such as +, -, *, /, **, we require the arrays to be of the same size.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n3.3 Uunary operations\nMany unary operations, such as computing the sum of all the elements in the array, are implemented as methods of the ndarray class.\nMethods include:\n\n.mean()\n.median()\n.sum()\n.min()\n.max()\n.std()\n.var()\n.round()\n.ceil()\n.floor()\n\nFor example, we can compute the sum of all elements in 1D array a as follow\n\n\n\n\n\n\n\n\nBy default, these operations apply to the array as though it were a list of numbers, regardless of its shape. However, by specifying the axis parameter you can apply an operation along the specified axis of an array.\nWhen axis = 0, we are applying the function on each column. When axis = 1, we are applying the function on each row.\n\n\n\n\n\n\n\n\nAs an exercise, find out what is the row means for exercise_4_array (You can use this variable name directly, it has been preloaded).\n\n\n\n\n\n\n\n\n\n\n\n\n\n3.4 Universal operations\nWe can also apply element wise transformation to an array. Some examples include\n\nnp.exp(array): exponentiate all entries\nnp.sqrt(array): take square root of all entries\nnp.add(array1, array2): elementwise addition\n\nAs an exercise, take square root of all entries in exercise_4_array (You can use this variable name directly, it has been preloaded) and store it under exercise_6_array."
+  },
+  {
+    "objectID": "Numpy.html#transposing-and-reshaping-arrays",
+    "href": "Numpy.html#transposing-and-reshaping-arrays",
+    "title": "Numpy Tutorial",
+    "section": "4. Transposing and reshaping arrays",
+    "text": "4. Transposing and reshaping arrays\nTo transpose an array, use the .T method. For instance\n\n\n\n\n\n\n\n\nWe can also reshape arrays into a desired shape with method .reshape()\n\n\n\n\n\n\n\n\nIf we want to transform a multidimensional array into a 1D array, i.e. flattening the array, we can use .flatten() or .ravel(). With ravel(), the new array created is a reference to the parent array. So, any changes to the new array will affect the parent array as well. But since ravel does not create a copy, it’s more memory efficient.\nThe example below demonstrates flatten and ravel applied on b and how they affect the parent array (b) if modifications are done on the new arrays (b_flatten and b_ravel).\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAs an exercise, flatten in exercise_4_array (You can use this variable name directly, it has been preloaded) and store it under exercise_7_array. When we make edits on exercise_7_array, we want the modifications to be reflected on exercise_4_array as well."
+  },
+  {
+    "objectID": "Numpy.html#indexing-and-slicing",
+    "href": "Numpy.html#indexing-and-slicing",
+    "title": "Numpy Tutorial",
+    "section": "5. Indexing and slicing",
+    "text": "5. Indexing and slicing\nWe can index and slice arrays the same way as in Python lists.\nRecall that in Python, indexing starts from 0. We also index elements by counting backwards and adding a negative sign to the count. To slice a range of elements, use start:stop:step. By default, stop is length of the array and step is 1. Note that stop is exclusive.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMultidimensional arrays can have one index per axis. These indices are given in a tuple separated by commas.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAs an exercise, extract the 3rd column entries in all rows in exercise_4_array (You can use this variable name directly, it has been preloaded) and store it under exercise_8_array."
+  }
+]
