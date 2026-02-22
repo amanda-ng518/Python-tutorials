@@ -101,7 +101,7 @@ font1 = {"family": "sans-serif", "size" : 20, "color" : "blue"}
 font2 = {"family": "monospace", "size" : 14, "color" : "red"}
 ```
 
-We can add these settings to our previous the text with `fontdict` argument. Such as
+We can add these settings to the text elements with `fontdict` argument. Such as
 `ax.set_xlabel("x axis label name", fontdict = font1) `. Feel free to play around 
 with the font dictionary and see how it affects the first plot in Section 2.1.
 
