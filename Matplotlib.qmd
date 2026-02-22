@@ -128,9 +128,9 @@ fig, ax = plt.subplots(figsize = (5,3))
 # Scatter plot
 ax.scatter(x,y)
 
-# Labels and title 
-ax.set_xlabel("Weight") 
-ax.set_ylabel("Height") 
+# Labels and title with font dictionaries
+ax.set_xlabel("Weight", fontdict = font1) 
+ax.set_ylabel("Height", fontdict = font2) 
 ax.set_title("Scatterplot of weight vs height")
 
 # Show the plot
@@ -145,7 +145,7 @@ refer to [https://matplotlib.org/stable/api/markers_api.html](https://matplotlib
 # Define a figure with a single Axes
 fig, ax = plt.subplots(figsize = (5,3))
 
-# Scatter plot
+# Scatter plot with marker and color settings
 ax.scatter(x,y, marker = "*", color = "purple")
 
 # Show the plot
@@ -210,7 +210,7 @@ You may refer to [https://matplotlib.org/stable/gallery/lines_bars_and_markers/l
 # Define a figure with a single Axes
 fig, ax = plt.subplots(figsize = (5,3))
 
-# Line plot (x axis, line heights)
+# Line plot with line style settings
 ax.plot(mean_age.index, mean_age.values, linestyle = "--", linewidth = 0.5)
 
 # Show the plot
