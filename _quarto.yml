@@ -12,6 +12,8 @@ website:
         text: Pandas
       - href: Scikitlearn.qmd
         text: Scikitlearn
+      - href: Matplotlib.qmd
+        text: Matplotlib
 
 format:
   html:
