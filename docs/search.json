@@ -44,9 +44,37 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Python_websites",
+    "title": "Python Tutorial",
     "section": "",
     "text": "Welcome to the Python tutorial website!. Here, you’ll find practical, beginner‑friendly guides to essential data science libraries including NumPy, Pandas, Scikit‑learn, and Matplotlib. To support learners coming from different backgrounds, many examples are shown in both Python and R, making it easier to compare syntax and build intuition across languages. Each section includes hands‑on exercises designed to strengthen understanding and encourage exploration. Whether you’re just starting your programming journey or expanding your analytical toolkit, I hope these resources make learning both accessible and enjoyable.\nContributors: Amanda Ng and Gracia Dong"
+  },
+  {
+    "objectID": "Matplotlib.html",
+    "href": "Matplotlib.html",
+    "title": "Matplotlib Tutorial",
+    "section": "",
+    "text": "Matplotlib is Python’s foundational plotting library, giving you full control over creating clear, customizable visualizations, from simple line plot, bar plot, histogram, boxplots etc to complex multi‑panel figures."
+  },
+  {
+    "objectID": "Matplotlib.html#data-preparation",
+    "href": "Matplotlib.html#data-preparation",
+    "title": "Matplotlib Tutorial",
+    "section": "0. Data Preparation",
+    "text": "0. Data Preparation\nLet’s first load in the data and remove all missing values."
+  },
+  {
+    "objectID": "Matplotlib.html#components",
+    "href": "Matplotlib.html#components",
+    "title": "Matplotlib Tutorial",
+    "section": "1. Components",
+    "text": "1. Components\nMatplotlib graphs your data on Figures (e.g., windows, Jupyter widgets, etc.), each of which can contain one or more Axes, an area where points can be specified in terms of x-y coordinates (or x-y-z in a 3D plot, etc.). We can then use Axes.plot to draw some data on the Axes, and use .show() to display the plot.\n\n1.1 Figure\nWhen using Matplotlib, we usually start be defining the figure, which is a container that holds the plots (i.e. axes). The basic syntax is .figure() which creates a single plot space. .subplots() is useful when you want to define both the figure and axes or you want to create subplots within a single figure.\n\n\n\n\n\n\n\n\n\n\n1.2 Axes\nAn Axes attached to a Figure represents the region for plotting data, and usually includes two (or three in the case of 3D) Axis objects (be aware of the difference between Axes and Axis) that provide ticks and tick labels to provide scales for the data in the Axes. The Axes methods are the primary interface for configuring most parts of your plot (adding data, controlling axis scales and limits, adding labels etc.).\n\n\n1.3 Artist\nEverything visual elements on the Figure is an Artist. This includes color, legends, axis titles and scales, text, etc. Most Artists are tied to a single Axes. So, an Artist cannot be shared by multiple Axes, or moved from one to another. Some common elements include:\n\n.set_xlabel(\"x axis label name\")\n.set_ylabel(\"y axis label name\")\n.set_title(\"figure title\")\n.legend()\n.set_xlim()\n.set_ylim()\n\nAside from adding axis labels and titles, we can also modify their appearance by defining font dictionary, in which we can control the family, size, and color. Here are some font families available:serif, sans-serif, cursive, fantasy, monospace.\n\n\n\n\n\n\n\n\nWe can add these settings to our previous the text with fontdict argument. Such as ax.set_xlabel(\"x axis label name\", fontdict = font1). Feel free to play around with the font dictionary and see how it affects the first plot in Section 2.1."
+  },
+  {
+    "objectID": "Matplotlib.html#common-plots",
+    "href": "Matplotlib.html#common-plots",
+    "title": "Matplotlib Tutorial",
+    "section": "2. Common plots",
+    "text": "2. Common plots\nLet’s use the nhanes data to produce some plots!\n\n2.1 Scatterplot\nSuppose we are interested in the relationship between weight and height, we can produce a scatterplot. First, define the objects to be plotted (x and y). Then, define a figure and axes to make the plot. With axes, apply .scatter() method to create the plot. Lastly, display the plot using .show() method from Matplotlib. .tight_layout() automatically adjusts subplot parameters to prevent labels and titles from being clipped or overlapping, ensuring the entire plot fits within the figure area.\n\n\n\n\n\n\n\n\nWe can also modify the setting of the dots in the scatterplot using marker and color. You may refer to https://matplotlib.org/stable/api/markers_api.html for more details about marker type available.\n\n\n\n\n\n\n\n\n\n\n2.2 Barplot\nSuppose we are interested in the mean age by stroke status. First, calculate the stroke level mean age using .groupby() and .mean(). With axes, apply .bar() method to create a bar plot. The first element denotes the group names to be displayed on the x axis, while the second element represents the heights of these bars.\n\n\n\n\n\n\n\n\n\n\n2.3 Lineplot\nAlternatively, we can also create a line plot by apply .plot() method to create a line plot.\n\n\n\n\n\n\n\n\nWe can also modify the setting of the dots in the scatterplot using linestyle and linewidth. You may refer to https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html for more details about linestyles available.\n\n\n\n\n\n\n\n\n\n\n2.4 Histogram\nSuppose we are interested in the distribution of age. We can use .hist() method to create a histogram. We need to specify the object of which we want to display the distribution and number of bins.\n\n\n\n\n\n\n\n\nWe can also create overlaying plots. Below, we show the distribution of age by gender group. We can set the degree of transparency for each histogram through alpha (1 is solid, 0 is completely transparent). Since we created histograms for each gender group, we have to add a label to each histogram and display the legend for clarity.\n\n\n\n\n\n\n\n\n\n\n2.5 Boxplot\nAside from histogram, we can also show distribution of age using a boxplot with .boxplot(). Here, we need to specify the object of which we want to display the distribution. Optionally, we can also control whether the plot is displayed vertically in vert, the length of whisker in whis (by default 1.5) where the lowest datum is Q1 - whis*(Q3-Q1) and highest datum is Q3 + whis*(Q3-Q1). Note that the middle line is median, we can show the mean with showmeans.\n\n\n\n\n\n\n\n\nWe can also create side-by-side boxplots of age by gender. This can be done by defining the gender specific data, then placing them as a list inside .boxplot() with assigned labels.\n\n\n\n\n\n\n\n\nAlternatively, we can also create separate boxplots (each with their own artists) by defining the axes objects in the plt.subplots(). We can then create boxplot by referencing the the axes index. This is less efficient since we have to set the title and labels for each plot."
   },
   {
     "objectID": "Pandas.html",
